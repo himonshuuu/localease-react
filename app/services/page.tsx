@@ -10,11 +10,12 @@ export const metadata = {
 async function getServices() {
   const supabase = await createClient();
   
+  // Fetch from demo_services with demo_providers
   const { data: services, error } = await supabase
-    .from("services")
+    .from("demo_services")
     .select(`
       *,
-      business_details (
+      demo_providers (
         business_name,
         business_address,
         business_category
@@ -28,7 +29,11 @@ async function getServices() {
     return [];
   }
 
-  return services || [];
+  // Transform data to match expected format
+  return (services || []).map((service) => ({
+    ...service,
+    business_details: service.demo_providers,
+  }));
 }
 
 async function getCategories() {

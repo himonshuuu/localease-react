@@ -198,7 +198,7 @@ export function ServicesContent({
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 50000]);
   const [showFilters, setShowFilters] = useState(false);
 
   // Use demo services if no real services exist
@@ -423,14 +423,22 @@ export function ServicesContent({
                     transition={{ duration: 0.3, delay: index * 0.05 }}
                     className="group rounded-xl border border-border bg-card overflow-hidden transition-all hover:border-primary/50 hover:shadow-lg"
                   >
-                    {/* Service Image Placeholder */}
-                    <div className={`h-32 ${categoryColors[service.category] || "bg-muted"} flex items-center justify-center`}>
-                      {(() => {
-                        const Icon = iconMap[
-                          categories.find((c) => c.name === service.category)?.icon || ""
-                        ] || Briefcase;
-                        return <Icon className="h-12 w-12 opacity-50" />;
-                      })()}
+                    {/* Service Image */}
+                    <div className={`relative h-40 ${!service.image_url ? (categoryColors[service.category] || "bg-muted") : ""} flex items-center justify-center overflow-hidden`}>
+                      {service.image_url ? (
+                        <img
+                          src={service.image_url}
+                          alt={service.name}
+                          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        />
+                      ) : (
+                        (() => {
+                          const Icon = iconMap[
+                            categories.find((c) => c.name === service.category)?.icon || ""
+                          ] || Briefcase;
+                          return <Icon className="h-12 w-12 opacity-50" />;
+                        })()
+                      )}
                     </div>
 
                     <div className="p-5">
@@ -466,9 +474,9 @@ export function ServicesContent({
                           </span>
                         </div>
                         <span className="font-semibold text-primary">
-                          ${service.price}
+                          ₹{service.price?.toLocaleString('en-IN')}
                           <span className="text-xs font-normal text-muted-foreground">
-                            /{service.price_type?.replace("_", " ") || "service"}
+                            {service.price_type && service.price_type !== 'fixed' ? ` ${service.price_type}` : ''}
                           </span>
                         </span>
                       </div>
